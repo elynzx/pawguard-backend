@@ -4,9 +4,21 @@ from django.db import models
 from django.utils import timezone
 
 
+class SoftDeleteQuerySet(models.QuerySet):
+    def delete(self):
+        now = timezone.now()
+        return self.update(
+            deleted_at=now,
+            updated_at=now,
+        )
+
+
 class SoftDeleteManager(models.Manager):
-    def get_queryset(self) -> models.QuerySet:
-        return super().get_queryset().filter(deleted_at__isnull=True)
+    def get_queryset(self) -> SoftDeleteQuerySet:
+        return SoftDeleteQuerySet(
+            self.model,
+            using=self._db,
+        ).filter(deleted_at__isnull=True)
 
 
 class BaseModel(models.Model):
@@ -18,13 +30,16 @@ class BaseModel(models.Model):
     objects = SoftDeleteManager()
     all_objects = models.Manager()
 
-    def soft_delete(self):
-        self.deleted_at = timezone.now()
-        self.save()
+    def delete(self, *args, **kwargs):
+        now = timezone.now()
+        self.deleted_at = now
+        self.updated_at = now
+        self.save(update_fields=["deleted_at", "updated_at"])
 
     def restore(self):
         self.deleted_at = None
-        self.save()
+        self.updated_at = timezone.now()
+        self.save(update_fields=["deleted_at", "updated_at"])
 
     class Meta:
         abstract = True
