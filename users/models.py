@@ -4,6 +4,8 @@ from typing import ClassVar
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .managers import UserManager
+
 
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -18,10 +20,14 @@ class User(AbstractUser):
         "locations.District",
         on_delete=models.PROTECT,
         related_name="users",
+        null=True,
+        blank=True,
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = UserManager()  # type: ignore[assignment]
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: ClassVar[list[str]] = ["first_name", "last_name"]
