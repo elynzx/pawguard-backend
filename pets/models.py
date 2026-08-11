@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from common.models import BaseModel
@@ -13,7 +14,7 @@ class Pet(BaseModel):
         FEMALE = "female", "Hembra"
 
     owner = models.ForeignKey(
-        "users.User",
+        settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="pets",
     )

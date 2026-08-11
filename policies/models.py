@@ -1,5 +1,6 @@
 from typing import ClassVar
 
+from django.conf import settings
 from django.db import models
 
 from common.models import BaseModel
@@ -17,7 +18,7 @@ class Policy(BaseModel):
         ANNUAL = "annual", "Anual"
 
     user = models.ForeignKey(
-        "users.User",
+        settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="policies",
     )
