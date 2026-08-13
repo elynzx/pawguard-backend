@@ -1,5 +1,3 @@
-from typing import ClassVar
-
 from django.db import models
 
 from common.models import BaseModel
@@ -20,7 +18,7 @@ class Plan(BaseModel):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        constraints: ClassVar[list[models.BaseConstraint]] = [
+        constraints = [
             models.UniqueConstraint(
                 fields=["name", "species"],
                 name="unique_plan_name_per_species",

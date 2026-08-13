@@ -1,5 +1,4 @@
 import uuid
-from typing import ClassVar
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -31,7 +30,7 @@ class User(AbstractUser):
     objects = UserManager()  # type: ignore[assignment]
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS: ClassVar[list[str]] = ["first_name", "last_name"]
+    REQUIRED_FIELDS = ["first_name", "last_name"]
 
     def __str__(self):
         return self.email
