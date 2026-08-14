@@ -36,6 +36,28 @@ class PetProfileSerializer(serializers.ModelSerializer):
         ]
 
 
+class PetPhotoUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pet
+        fields = ["photo_url"]
+
+    def validate_photo_url(self, value):
+        if not value:
+            raise serializers.ValidationError("La URL de la foto no puede estar vacia")
+
+        if "res.cloudinary" not in value:
+            raise serializers.ValidationError(
+                "La imagen debe ser subida y almacenada en Cloudinary."
+            )
+
+        valid_image_formats = (".jpg", ".jpeg", ".png", ".webp")
+        if not value.lower().endswith(valid_image_formats):
+            raise serializers.ValidationError(
+                "Formato de imagen inválido. Solo se permiten archivos .jpg, .jpeg, .png o .webp"
+            )
+        return value
+
+
 class CheckoutPetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pet
