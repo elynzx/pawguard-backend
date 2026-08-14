@@ -15,7 +15,7 @@ from .serializers import (
 )
 
 
-class UserProfileViewSet(generics.RetrieveUpdateAPIView):
+class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserProfileSerializer
 
