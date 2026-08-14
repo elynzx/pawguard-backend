@@ -1,7 +1,6 @@
-from typing import ClassVar
-
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 from common.models import BaseModel
 
@@ -12,10 +11,6 @@ class Policy(BaseModel):
         ACTIVE = "active", "Activo"
         EXPIRED = "expired", "Vencido"
         CANCELLED = "cancelled", "Cancelado"
-
-    class ContractPeriod(models.TextChoices):
-        SEMIANNUAL = "semiannual", "Semestral"
-        ANNUAL = "annual", "Anual"
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -34,24 +29,38 @@ class Policy(BaseModel):
         on_delete=models.PROTECT,
         related_name="policies",
     )
-
-    policy_number = models.CharField(max_length=20, unique=True, editable=False)
+    sequence_number = models.AutoField(unique=True, editable=False)
+    policy_number = models.CharField(
+        max_length=20,
+        unique=True,
+        editable=False,
+        blank=True,
+    )
     status = models.CharField(
         max_length=20, choices=Status.choices, default=Status.PENDING
     )
-    contract_period = models.CharField(max_length=20, choices=ContractPeriod.choices)
     start_date = models.DateField()
     end_date = models.DateField()
 
     class Meta:
-        ordering: ClassVar[list[str]] = ["-created_at"]
-        constraints: ClassVar[list[models.BaseConstraint]] = [
+        ordering = ["-created_at"]
+        constraints = [
             models.UniqueConstraint(
                 fields=["pet"],
                 condition=models.Q(status="active"),
                 name="unique_active_policy_per_pet",
             )
         ]
+
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        super().save(*args, **kwargs)
+
+        if is_new:
+            year = timezone.now().year
+            formatted_sequence = f"{self.sequence_number:05d}"
+            self.policy_number = f"PG-{year}-{formatted_sequence}"
+            super().save(update_fields=["policy_number"])
 
     def __str__(self):
         return self.policy_number
