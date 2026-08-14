@@ -1,4 +1,4 @@
-from rest_framework import status, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -12,7 +12,13 @@ from .serializers import (
 )
 
 
-class PetViewSet(viewsets.ModelViewSet):
+class PetViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -32,7 +38,8 @@ class PetViewSet(viewsets.ModelViewSet):
 
         if has_active_policy:
             return Response(
-                {"detail": "No se puede eliminar una mascota con seguro activo"}
+                {"detail": "No se puede eliminar una mascota con seguro activo"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         pet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
