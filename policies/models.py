@@ -29,7 +29,7 @@ class Policy(BaseModel):
         on_delete=models.PROTECT,
         related_name="policies",
     )
-    sequence_number = models.AutoField(unique=True, editable=False)
+    sequence_number = models.PositiveIntegerField(unique=True, editable=False)
     policy_number = models.CharField(
         max_length=20,
         unique=True,
@@ -54,13 +54,13 @@ class Policy(BaseModel):
 
     def save(self, *args, **kwargs):
         is_new = self._state.adding
-        super().save(*args, **kwargs)
 
         if is_new:
             year = timezone.now().year
-            formatted_sequence = f"{self.sequence_number:05d}"
-            self.policy_number = f"PG-{year}-{formatted_sequence}"
-            super().save(update_fields=["policy_number"])
+            last_policy = Policy.objects.order_by("-sequence_number").first()
+            self.sequence_number = last_policy.sequence_number + 1 if last_policy else 1
+            self.policy_number = f"PG-{year}-{self.sequence_number:05d}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.policy_number
