@@ -1,7 +1,14 @@
+databases:
+  - name: pawguard-db
+    databaseName: pawguard_prod
+    user: pawguard_user
+    plan: free
+
 services:
   - type: web
     name: pawguard-backend
     env: python
+    plan: free
     buildCommand: "./build.sh"
     startCommand: "gunicorn pawguard_backend.wsgi:application"
     envVars:
@@ -11,3 +18,9 @@ services:
         value: "False"
       - key: DJANGO_SECRET_KEY
         generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pawguard-db
+          property: connectionString
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com,localhost,127.0.0.1"
