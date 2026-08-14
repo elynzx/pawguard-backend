@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: pawguard-backend
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn pawguard_backend.wsgi:application"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: pawguard_backend.settings
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
