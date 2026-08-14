@@ -54,13 +54,6 @@ class CheckoutPetSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Solo se aceptan mascotas de compañía.")
         return value
 
-    def validate_species(self, value):
-        if value not in [Pet.PetSpecies.DOG, Pet.PetSpecies.CAT]:
-            raise serializers.ValidationError(
-                "La especie seleccionada no es asegurable."
-            )
-        return value
-
     def validate(self, data):
         age_months = data.get("declared_age_months")
 
@@ -78,7 +71,3 @@ class CheckoutPetSerializer(serializers.ModelSerializer):
                     }
                 )
         return data
-
-    def create(self, validated_data):
-        request_user = self.context["request"].user
-        return Pet.objects.create(owner=request_user, **validated_data)
