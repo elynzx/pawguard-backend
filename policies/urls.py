@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import PolicyCheckoutView, PolicyViewSet
 
 router = DefaultRouter()
-router.register("policies", PolicyViewSet, basename="policy")
+router.register("", PolicyViewSet, basename="policy")
 
 urlpatterns = [
     path("checkout/", PolicyCheckoutView.as_view(), name="policy-checkout"),
