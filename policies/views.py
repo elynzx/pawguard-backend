@@ -13,7 +13,7 @@ from .serializers import (
 )
 
 
-@extend_schema(tags=["Policies & Checkout Funnel"])
+@extend_schema(tags=["Policies & Checkout"])
 @extend_schema_view(
     list=extend_schema(
         summary="Listar el historial de pólizas contratadas",
@@ -32,15 +32,15 @@ class PolicyViewSet(ReadOnlyModelViewSet):
         return Policy.objects.filter(user=self.request.user)
 
 
-@extend_schema(tags=["Policies & Checkout Funnel"])
+@extend_schema(tags=["Policies & Checkout"])
 class PolicyCheckoutView(APIView):
     permission_classes = [AllowAny]
 
     @extend_schema(
-        summary="Procesar la compra transaccional de una póliza de seguro médico",
+        summary="Procesar la compra de una póliza de seguro medico",
         description=(
-            "Endpoint centralizado inteligente. Si la petición proviene de un visitante anónimo (Home), "
-            "crea la cuenta de usuario inactiva, la mascota y emite la póliza en una transacción atómica. "
+            "Endpoint centralizado. Si la petición proviene de un visitante anónimo (Home), "
+            "crea la cuenta de usuario inactiva, la mascota y emite la póliza en una transacción. "
             "Si proviene de un cliente logueado, procesa únicamente la nueva mascota y su seguro."
         ),
         request=CheckoutPolicySerializer,

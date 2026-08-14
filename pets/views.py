@@ -13,7 +13,7 @@ from .serializers import (
 )
 
 
-@extend_schema(tags=["Pets Dashboard Management"])
+@extend_schema(tags=["Pets Dashboard"])
 @extend_schema_view(
     list=extend_schema(
         summary="Listar las mascotas del propietario logueado",
@@ -29,7 +29,7 @@ from .serializers import (
     ),
     partial_update=extend_schema(
         summary="Actualizar parcialmente datos de la mascota",
-        description="Permite modificar campos cosméticos permitidos del animal sin alterar variables críticas de riesgo.",
+        description="Permite modificar campos permitidos del animal sin alterar variables críticas.",
     ),
 )
 class PetViewSet(
@@ -50,7 +50,7 @@ class PetViewSet(
         return PetProfileSerializer
 
     @extend_schema(
-        summary="Eliminar una mascota del sistema (Soft-Delete seguro)",
+        summary="Eliminar via soft_delete una mascota del sistema",
         description="Aplica una baja lógica al registro de la mascota. El sistema bloquea la eliminación si el animal cuenta con una póliza de seguros vigente activa.",
     )
     def destroy(self, request, *args, **kwargs):
@@ -69,7 +69,7 @@ class PetViewSet(
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
-        summary="Sincronizar la URL de la imagen emitida por Cloudinary",
+        summary="Sincronizar la URL de la imagen generada por Cloudinary",
         description="Recibe el string seguro de la URL generado por el cargador directo del Frontend en Cloudinary y lo asocia al avatar del animal.",
         request=PetPhotoUpdateSerializer,
         responses={200: PetPhotoUpdateSerializer},

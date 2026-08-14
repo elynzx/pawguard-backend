@@ -44,8 +44,8 @@ class DashboardView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        summary="Obtener el panel de datos consolidado (BFF Engine)",
-        description="Endpoint agregador avanzado de rendimiento. Devuelve el perfil del dueño, sus mascotas y sus pólizas vigentes en un solo viaje HTTP.",
+        summary="Obtener el panel de datos consolidado",
+        description="Endpoint agregador avanzado de rendimiento. Devuelve el perfil del dueño, sus mascotas y sus pólizas vigentes.",
     )
     def get(self, request, *args, **kwargs):
         active_user = request.user
@@ -66,7 +66,7 @@ class DashboardView(generics.RetrieveAPIView):
         )
 
 
-@extend_schema(tags=["Authentication & Identity"])
+@extend_schema(tags=["Authentication"])
 class AccountActivationView(APIView):
     permission_classes = [AllowAny]
 

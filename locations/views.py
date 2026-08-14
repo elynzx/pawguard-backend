@@ -10,8 +10,8 @@ from .serializers import ClinicSerializer, DistrictSerializer
 @extend_schema(tags=["Locations"])
 @extend_schema_view(
     list=extend_schema(
-        summary="Listar distritos asegurables",
-        description="Obtiene el catálogo completo de distritos permitidos para poblar los selectores geográficos del formulario de compra.",
+        summary="Listar distritos de Lima Metropolitana",
+        description="Obtiene el catálogo completo de distritos para los selectores.",
     )
 )
 class DistrictViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -23,12 +23,12 @@ class DistrictViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 @extend_schema(tags=["Locations"])
 @extend_schema_view(
     list=extend_schema(
-        summary="Listar red de clínicas veterinarias afiliadas",
-        description="Recupera todas las sedes veterinarias asociadas, incluyendo coordenadas de latitud y longitud para renderizar el mapa interactivo.",
+        summary="Listar red de clínicas de la veterinaria",
+        description="Recupera todas las sedes veterinarias, incluyendo coordenadas de latitud y longitud para renderizar en un mapa interactivo.",
     ),
     retrieve=extend_schema(
-        summary="Obtener ficha técnica de una clínica veterinaria",
-        description="Muestra la información específica de contacto, dirección y horarios de una sede al dar clic en su pin del mapa.",
+        summary="Obtener informacion de una clinica veterinaria",
+        description="Muestra la información específica de telefono y dirección de una sede.",
     ),
 )
 class ClinicViewSet(ReadOnlyModelViewSet):

@@ -10,7 +10,7 @@ from .serializers import PlanSerializer
 @extend_schema_view(
     list=extend_schema(
         summary="Listar planes comerciales vigentes",
-        description="Obtiene el catálogo público de coberturas de seguros médicos activos para mostrar en las tarjetas de venta de la web.",
+        description="Obtiene el catálogo de coberturas de seguros médicos activos para mostrar en la web.",
     ),
     retrieve=extend_schema(
         summary="Obtener cobertura detallada de un plan",
