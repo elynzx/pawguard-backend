@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -12,6 +13,17 @@ from .serializers import (
 )
 
 
+@extend_schema(tags=["Policies & Checkout Funnel"])
+@extend_schema_view(
+    list=extend_schema(
+        summary="Listar el historial de pólizas contratadas",
+        description="Retorna una lista con todos los contratos de seguros médicos y vigencias que le pertenecen estrictamente al usuario logueado.",
+    ),
+    retrieve=extend_schema(
+        summary="Obtener el detalle de una póliza específica",
+        description="Inspecciona el estado, número de póliza secuencial formateado y coberturas de un contrato anual por su ID.",
+    ),
+)
 class PolicyViewSet(ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = PolicySerializer
@@ -20,9 +32,20 @@ class PolicyViewSet(ReadOnlyModelViewSet):
         return Policy.objects.filter(user=self.request.user)
 
 
+@extend_schema(tags=["Policies & Checkout Funnel"])
 class PolicyCheckoutView(APIView):
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        summary="Procesar la compra transaccional de una póliza de seguro médico",
+        description=(
+            "Endpoint centralizado inteligente. Si la petición proviene de un visitante anónimo (Home), "
+            "crea la cuenta de usuario inactiva, la mascota y emite la póliza en una transacción atómica. "
+            "Si proviene de un cliente logueado, procesa únicamente la nueva mascota y su seguro."
+        ),
+        request=CheckoutPolicySerializer,
+        responses={201: PolicySerializer},
+    )
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             serializer = UserNewPetPolicySerializer(
